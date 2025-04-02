@@ -11,6 +11,7 @@ import Index from "@/pages/Index";
 import ProductsPage from "@/pages/ProductsPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
 import CartPage from "@/pages/CartPage";
+import CheckoutPage from "@/pages/CheckoutPage";
 import CategoriesPage from "@/pages/CategoriesPage";
 import CategoryDetailPage from "@/pages/CategoryDetailPage";
 import About from "@/pages/About";
@@ -34,6 +35,7 @@ const App = () => (
                 <Route path="/products" element={<ProductsPage />} />
                 <Route path="/product/:id" element={<ProductDetailPage />} />
                 <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/categories" element={<CategoriesPage />} />
                 <Route path="/category/:id" element={<CategoryDetailPage />} />
                 <Route path="/about" element={<About />} />

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Trash2, ChevronLeft, ShoppingBag } from "lucide-react";
@@ -10,6 +10,7 @@ import { formatCurrency } from "@/lib/utils";
 
 const CartPage = () => {
   const { cart, updateQuantity, removeItem, clearCart } = useCart();
+  const navigate = useNavigate();
 
   return (
     <div className="container py-8">
@@ -23,43 +24,47 @@ const CartPage = () => {
           <div className="lg:col-span-2">
             <div className="space-y-4">
               {cart.items.map((item) => (
-                <div 
-                  key={item.productId} 
+                <div
+                  key={item.productId}
                   className="flex flex-col sm:flex-row gap-4 border rounded-lg p-4"
                 >
                   <div className="relative w-full sm:w-32 aspect-square shrink-0">
-                    <img 
-                      src={item.product.image} 
-                      alt={item.product.name} 
+                    <img
+                      src={item.product.image || 'https://placehold.co/400x400?text=No+Image'}
+                      alt={item.product.name}
                       className="object-cover h-full w-full rounded-md"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://placehold.co/400x400?text=No+Image';
+                      }}
                     />
                   </div>
-                  
+
                   <div className="flex-grow">
                     <div className="flex justify-between">
                       <Link to={`/product/${item.productId}`} className="text-lg font-medium hover:underline">
                         {item.product.name}
                       </Link>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-muted-foreground" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground"
                         onClick={() => removeItem(item.productId)}
                       >
                         <Trash2 className="h-4 w-4" />
                         <span className="sr-only">Remove</span>
                       </Button>
                     </div>
-                    
+
                     <div className="my-2">
                       <span className="category-badge">
                         {item.product.category.replace("_", " ")}
                       </span>
                     </div>
-                    
+
                     <div className="mt-auto pt-2 flex flex-wrap justify-between items-center gap-4">
-                      <QuantityInput 
-                        quantity={item.quantity} 
+                      <QuantityInput
+                        quantity={item.quantity}
                         onChange={(q) => updateQuantity(item.productId, q)}
                         max={item.product.stock}
                       />
@@ -71,7 +76,7 @@ const CartPage = () => {
                 </div>
               ))}
             </div>
-            
+
             <div className="flex justify-between mt-6">
               <Button asChild variant="outline">
                 <Link to="/products" className="flex items-center gap-2">
@@ -79,16 +84,16 @@ const CartPage = () => {
                   Continue Shopping
                 </Link>
               </Button>
-              
+
               <Button variant="outline" onClick={clearCart} className="text-muted-foreground">
                 Clear Cart
               </Button>
             </div>
           </div>
-          
+
           <div className="bg-muted rounded-lg p-6">
             <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-            
+
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span>Subtotal ({cart.totalItems} items)</span>
@@ -103,19 +108,24 @@ const CartPage = () => {
                 <span>Calculated at checkout</span>
               </div>
             </div>
-            
+
             <Separator className="my-4" />
-            
+
             <div className="flex justify-between text-lg font-bold mb-6">
               <span>Total</span>
               <span>{formatCurrency(cart.totalPrice)}</span>
             </div>
-            
-            <Button className="w-full" size="lg">
+
+            <Button
+              className="w-full"
+              size="lg"
+              onClick={() => navigate('/checkout')}
+              disabled={cart.items.length === 0}
+            >
               <ShoppingBag className="h-4 w-4 mr-2" />
               Proceed to Checkout
             </Button>
-            
+
             <div className="mt-4 text-sm text-muted-foreground text-center">
               Secure checkout powered by Stripe
             </div>
